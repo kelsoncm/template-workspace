@@ -1,0 +1,35 @@
+{
+    "folders": [
+        {
+            "name": "💼 {{TITLE}}",
+            "path": "."
+        },
+        {
+            "name": "📄 Pages",
+            "path": "../pages"
+        },
+        {
+            "name": "📄 Profile",
+            "path": "../profile"
+        }
+    ],
+    "settings": {
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": false,
+        "files.eol": "\n",
+        "[python]": {
+            "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "[php]": {
+            "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+        },
+        "github.copilot.chat.commitMessageGeneration.instructions": [
+            {
+                "text": "Gere mensagens de commit em português no formato Conventional Commits detalhado: tipo(escopo): [TAG] descrição no imperativo."
+            },
+            {
+                "text": "Use as tags [ADD], [FIX], [UPD], [DEL] ou [UPG] e um corpo com Motivo, Impacto e Arquivos/Mudanças."
+            }
+        ]
+    }
+}

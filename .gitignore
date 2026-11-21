@@ -1,0 +1,19 @@
+# Segredos e configuração local
+.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+
+# Saídas
+build/
+dist/
+volumes/
+
+# Editores e sistema
+.idea/
+.DS_Store
+Thumbs.db

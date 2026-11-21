@@ -1,0 +1,41 @@
+name: __cli__
+
+# Django + PostgreSQL para desenvolvimento local. As credenciais vêm do .env (copie de .env.example).
+# Cada app/pacote clonado ao lado do workspace é montado em /app e instalado em modo editável.
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: __cli__-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DB_NAME:-django}
+      - POSTGRES_USER=${DB_USER:-django}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?defina DB_PASSWORD no .env}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  app:
+    image: python:3.13-slim
+    container_name: __cli__-app
+    restart: unless-stopped
+    working_dir: /app
+    command: bash -c "pip install -q uv && uv pip install --system -e /app && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgres://${DB_USER:-django}:${DB_PASSWORD}@db:5432/${DB_NAME:-django}
+    volumes:
+      - ../app:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:

@@ -1,0 +1,27 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["kcm-workspace>=0.2.0"]
+# ///
+# -*- coding: utf-8 -*-
+"""CLI do workspace {{TITLE}}: clona os repositórios da organização e orquestra o docker compose."""
+from kcm_workspace import GitClone, Workspace
+
+GITBASE = "git@github.com:{{OWNER}}"
+
+
+class Cli(Workspace):
+    def __init__(self):
+        super().__init__(
+            __file__,
+            git_clones=[
+                # Pasta local (ao lado do workspace)  URL do repositório
+                GitClone("pages",                     f"{GITBASE}/{{OWNER}}.github.io.git"),
+                GitClone("profile",                   f"{GITBASE}/.github.git"),
+                # GitClone("meu_componente",          f"{GITBASE}/meu-repositorio.git"),
+            ],
+        )
+
+
+if __name__ == "__main__":
+    Cli.main()

@@ -1,0 +1,55 @@
+name: __cli__
+
+# Moodle + PostgreSQL para desenvolvimento local. As credenciais vêm do .env (copie de .env.example).
+# Moodle 5.1+ serve a partir de public/: monte os plugins em /var/www/html/public/<pasta do tipo>/<nome>.
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: __cli__-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DB_NAME:-moodle}
+      - POSTGRES_USER=${DB_USER:-moodle}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?defina DB_PASSWORD no .env}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  moodle:
+    image: kelsoncm/moodle:5.3.0.005
+    container_name: __cli__-moodle
+    restart: unless-stopped
+    ports:
+      - "${MOODLE_PORT:-8080}:80"
+    environment:
+      - CFG_DBHOST=db
+      - CFG_DBPORT=5432
+      - CFG_DBNAME=${DB_NAME:-moodle}
+      - CFG_DBUSER=${DB_USER:-moodle}
+      - CFG_DBPASS=${DB_PASSWORD}
+      - CFG_ENV=local
+      - CFG_DEBUG=true
+      - CFG_PREFIX=mdl_
+      - CFG_WWWROOT=http://localhost:${MOODLE_PORT:-8080}
+      - CFG_ADMINUSER=${MOODLE_ADMIN_USER:-admin}
+      - CFG_ADMINPASS=${MOODLE_ADMIN_PASSWORD:?defina MOODLE_ADMIN_PASSWORD no .env}
+      - CFG_ADMINEMAIL=admin@example.com
+      - CFG_FULLNAME={{TITLE}}
+      - CFG_SHORTNAME=__cli__
+    volumes:
+      - moodle_data:/var/www/moodledata
+      # Plugins (exemplo):
+      # - ../tool_meuplugin:/var/www/html/public/admin/tool/meuplugin
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  moodle_data:
