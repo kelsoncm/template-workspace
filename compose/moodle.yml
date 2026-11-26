@@ -11,7 +11,7 @@ services:
     environment:
       - POSTGRES_DB=${DB_NAME:-moodle}
       - POSTGRES_USER=${DB_USER:-moodle}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:?defina DB_PASSWORD no .env}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?}
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -38,7 +38,7 @@ services:
       - CFG_PREFIX=mdl_
       - CFG_WWWROOT=http://localhost:${MOODLE_PORT:-8080}
       - CFG_ADMINUSER=${MOODLE_ADMIN_USER:-admin}
-      - CFG_ADMINPASS=${MOODLE_ADMIN_PASSWORD:?defina MOODLE_ADMIN_PASSWORD no .env}
+      - CFG_ADMINPASS=${MOODLE_ADMIN_PASSWORD:?}
       - CFG_ADMINEMAIL=admin@example.com
       - CFG_FULLNAME={{TITLE}}
       - CFG_SHORTNAME=__cli__
